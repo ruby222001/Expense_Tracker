@@ -55,6 +55,8 @@ class _SplashLoginPageState extends State<SplashLoginPage> {
     } catch (e) {
       setState(() {
         _message = "Error: $e";
+        // print(_message);
+
       });
     }
   }

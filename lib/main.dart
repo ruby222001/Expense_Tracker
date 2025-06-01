@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: controller.themeData,
-      home: SplashLoginPage(),
+      home: MyHomePage(),
     );
   }
 }
