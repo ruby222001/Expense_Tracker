@@ -1,74 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:hive_practise/homepage.dart';
-import 'package:local_auth/local_auth.dart';
+import 'package:get/get.dart';
+import 'package:hive_practise/controller/splash_controller.dart';
 
-class SplashLoginPage extends StatefulWidget {
-  @override
-  _SplashLoginPageState createState() => _SplashLoginPageState();
-}
+class SplashLoginPage extends StatelessWidget {
+  SplashLoginPage({Key? key}) : super(key: key);
 
-class _SplashLoginPageState extends State<SplashLoginPage> {
-  final LocalAuthentication auth = LocalAuthentication();
-  String _message = "Authenticating...";
-
-  @override
-  void initState() {
-    super.initState();
-    _authenticate();
-  }
-
-  Future<void> _authenticate() async {
-    bool canCheckBiometrics = false;
-    bool authenticated = false;
-
-    try {
-      canCheckBiometrics = await auth.canCheckBiometrics;
-      if (!canCheckBiometrics) {
-        setState(() {
-          _message = "Biometric authentication not available.";
-        });
-        return;
-      }
-
-      authenticated = await auth.authenticate(
-        localizedReason: 'Please authenticate to continue',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
-      );
-
-      if (authenticated) {
-        setState(() {
-          _message = "Authentication successful!";
-        });
-        // Navigate to the next page, e.g. HomePage
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => MyHomePage()),
-        );
-      } else {
-        setState(() {
-          _message = "Authentication failed. Try again.";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _message = "Error: $e";
-        // print(_message);
-
-      });
-    }
-  }
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text(
-          _message,
-          style: TextStyle(fontSize: 20),
-          textAlign: TextAlign.center,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Obx(() => Text(
+                    authController.message.value,
+                    style: const TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  )),
+              const SizedBox(height: 20),
+
+              // 🔹 Fingerprint only
+              ElevatedButton.icon(
+                onPressed: () => authController.authenticate(biometricOnly: true),
+                icon: const Icon(Icons.fingerprint),
+                label: const Text("Use Fingerprint"),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // 🔹 PIN or Biometric (system dialog lets user pick)
+              ElevatedButton.icon(
+                onPressed: () => authController.authenticate(biometricOnly: false),
+                icon: const Icon(Icons.lock),
+                label: const Text("Use PIN or Biometric"),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_practise/components/snackbar.dart';
 
 class AppController extends GetxController {
   late Box box;
@@ -33,7 +35,8 @@ class AppController extends GetxController {
     }
   }
 
-  void addData(String expense, String price, String tag, String date) {
+  void addData(BuildContext context, String expense, String price, String tag,
+      String date) {
     final newEntry = {
       'expense': expense,
       'price': price,
@@ -43,6 +46,8 @@ class AppController extends GetxController {
     allExpenses.add(newEntry);
     box.put('expensesList', allExpenses);
     calculateTotalExpense();
+    SSnackbarUtil.showFadeSnackbar(
+        context, "added expense", SnackbarType.success);
     print("Added: $newEntry");
   }
 
@@ -55,8 +60,8 @@ class AppController extends GetxController {
     }
   }
 
-  void updateAt(int index, String newExpense, String newPrice, String newTag,
-      String newDate) {
+  void updateAt(BuildContext context, int index, String newExpense,
+      String newPrice, String newTag, String newDate) {
     if (index >= 0 && index < allExpenses.length) {
       allExpenses[index] = {
         'expense': newExpense,
@@ -66,6 +71,9 @@ class AppController extends GetxController {
       };
       box.put('expensesList', allExpenses);
       calculateTotalExpense();
+      SSnackbarUtil.showFadeSnackbar(
+          context, "updated expense", SnackbarType.success);
+
       print("Updated item at $index: ${allExpenses[index]}");
     }
   }

@@ -9,7 +9,7 @@ import 'package:hive_practise/theme/theme.dart';
 void main() async {
   Get.put(ThemeController());
   await Hive.initFlutter();
-  await Hive.openBox('test'); //in sd card there is test
+  await Hive.openBox('test');
   runApp(MyApp());
 }
 
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: controller.themeData,
-      home: MyHomePage(),
+      home: SplashLoginPage(),
     );
   }
 }

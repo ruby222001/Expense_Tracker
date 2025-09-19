@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_practise/components/snackbar.dart';
 import 'package:hive_practise/page/add_expense_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:hive_practise/controller/app_controller.dart';
@@ -7,7 +8,7 @@ import 'package:hive_practise/controller/app_controller.dart';
 class AddExpensePage extends StatefulWidget {
   final bool isEditing;
   final int? index;
-  final Map<String, String>? existingExpense;
+  final Map<String, dynamic>? existingExpense;
 
   AddExpensePage({this.isEditing = false, this.index, this.existingExpense});
 
@@ -94,7 +95,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Selected Date: ${DateFormat('yyyy-MM-dd').format(addExpensecontroller.selectedDate)}",
+                    "Today: ${DateFormat('yyyy-MM-dd').format(addExpensecontroller.selectedDate)}",
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 8),
@@ -116,7 +117,10 @@ class _AddExpensePageState extends State<AddExpensePage> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text("Cancel"),
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -130,16 +134,22 @@ class _AddExpensePageState extends State<AddExpensePage> {
 
                       if (expense.isNotEmpty && price.isNotEmpty) {
                         if (widget.isEditing && widget.index != null) {
-                          controller.updateAt(widget.index!, expense, price,
-                              tag, formattedDate);
+                          controller.updateAt(context, widget.index!, expense,
+                              price, tag, formattedDate);
                         } else {
                           controller.addData(
-                              expense, price, tag, formattedDate);
+                              context, expense, price, tag, formattedDate);
                         }
                         Navigator.pop(context);
+                      } else {
+                        SSnackbarUtil.showFadeSnackbar(
+                            context, "add expense to save", SnackbarType.info);
                       }
                     },
-                    child: Text("Save"),
+                    child: Text(
+                      "Save",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
