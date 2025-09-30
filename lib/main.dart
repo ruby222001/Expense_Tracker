@@ -4,6 +4,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive_practise/homepage.dart';
 import 'package:hive_practise/page/splash_page.dart';
+import 'package:hive_practise/services/version_helper.dart';
 import 'package:hive_practise/theme/theme.dart';
 
 void main() async {
@@ -13,9 +14,20 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final controller = Get.put(ThemeController());
+  @override
+  void initState() {
+    super.initState();
+    VersionHelper.basicStatusCheck();
+  }
 
   @override
   Widget build(BuildContext context) {

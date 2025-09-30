@@ -9,4 +9,5 @@ class ExpenseController extends GetxController{
   DateTime selectedDate = DateTime.now();
 
   final List<String> tags = ['Food', 'Travel', 'Shopping', 'Other'];
+
 }

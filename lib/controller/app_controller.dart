@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_practise/components/snackbar.dart';
+import 'package:intl/intl.dart';
+
+extension DateParsing on String {
+  DateTime? toDate() {
+    try {
+      return DateTime.parse(this);
+    } catch (e) {
+      return null;
+    }
+  }
+}
 
 class AppController extends GetxController {
   late Box box;
@@ -35,20 +46,71 @@ class AppController extends GetxController {
     }
   }
 
-  void addData(BuildContext context, String expense, String price, String tag,
-      String date) {
-    final newEntry = {
-      'expense': expense,
-      'price': price,
-      'tag': tag,
-      'date': date,
-    };
-    allExpenses.add(newEntry);
-    box.put('expensesList', allExpenses);
-    calculateTotalExpense();
-    SSnackbarUtil.showFadeSnackbar(
-        context, "added expense", SnackbarType.success);
-    print("Added: $newEntry");
+  Map<String, double> get expensesByCategory {
+    Map<String, double> dataMap = {};
+
+    for (var item in allExpenses) {
+      final tag = item['tag'] ?? 'Other';
+      final price = double.tryParse(item['price'].toString()) ?? 0;
+
+      if (dataMap.containsKey(tag)) {
+        dataMap[tag] = dataMap[tag]! + price;
+      } else {
+        dataMap[tag] = price;
+      }
+    }
+
+    return dataMap;
+  }
+
+  Map<String, double> get expensesByMonth {
+    Map<String, double> dataMap = {};
+    for (var item in allExpenses) {
+      final date = item['date']?.toDate();
+      final price = double.tryParse(item['price'] ?? '0') ?? 0;
+      if (date != null) {
+        // Format month as "January 2025"
+        String key = "${DateFormat('MMMM yyyy').format(date)}";
+        dataMap[key] = (dataMap[key] ?? 0) + price;
+      }
+    }
+
+    // Sort by latest date first
+    final sortedEntries = dataMap.entries.toList()
+      ..sort((a, b) {
+        final dateA = DateFormat('MMMM yyyy').parse(a.key);
+        final dateB = DateFormat('MMMM yyyy').parse(b.key);
+        return dateB.compareTo(dateA); // newest first
+      });
+
+    return Map.fromEntries(sortedEntries);
+  }
+
+  Map<String, double> get expensesByYear {
+    Map<String, double> dataMap = {};
+    for (var item in allExpenses) {
+      final date = item['date']?.toDate();
+      final price = double.tryParse(item['price'] ?? '0') ?? 0;
+      if (date != null) {
+        String key = "${date.year}";
+        dataMap[key] = (dataMap[key] ?? 0) + price;
+      }
+    }
+
+    // Sort years newest first
+    final sortedEntries = dataMap.entries.toList()
+      ..sort((a, b) => int.parse(b.key).compareTo(int.parse(a.key)));
+
+    return Map.fromEntries(sortedEntries);
+  }
+
+  List<Map<String, String>> getExpensesForMonth(String monthKey) {
+    final parsedDate = DateFormat('MMMM yyyy').parse(monthKey);
+    return allExpenses.where((item) {
+      final date = item['date']?.toDate();
+      if (date == null) return false;
+      return (date.month == parsedDate.month && date.year == parsedDate.year);
+    }).toList();
   }
 
   void deleteAt(int index) {
@@ -76,5 +138,21 @@ class AppController extends GetxController {
 
       print("Updated item at $index: ${allExpenses[index]}");
     }
+  }
+
+  void addData(BuildContext context, String expense, String price, String tag,
+      String date) {
+    final newEntry = {
+      'expense': expense,
+      'price': price,
+      'tag': tag,
+      'date': date,
+    };
+    allExpenses.add(newEntry);
+    box.put('expensesList', allExpenses);
+    calculateTotalExpense();
+    SSnackbarUtil.showFadeSnackbar(
+        context, "added expense", SnackbarType.success);
+    print("Added: $newEntry");
   }
 }

@@ -16,32 +16,47 @@ class SplashLoginPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Text(
+                'Track Your Expense Daily!!!',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Image.asset('assets/images/expense1.jpg'),
+              SizedBox(
+                height: 30,
+              ),
               Obx(() => Text(
                     authController.message.value,
                     style: const TextStyle(fontSize: 20),
                     textAlign: TextAlign.center,
                   )),
-              const SizedBox(height: 20),
+              const SizedBox(height: 50),
 
               // 🔹 Fingerprint only
-              ElevatedButton.icon(
-                onPressed: () => authController.authenticate(biometricOnly: true),
-                icon: const Icon(Icons.fingerprint),
-                label: const Text("Use Fingerprint"),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-              ),
+              // ElevatedButton.icon(
+              //   onPressed: () =>
+              //       authController.authenticate(biometricOnly: true),
+              //   icon: const Icon(Icons.fingerprint),
+              //   label: const Text("Use Fingerprint"),
+              //   style: ElevatedButton.styleFrom(
+              //     padding:
+              //         const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              //   ),
+              // ),
 
               const SizedBox(height: 12),
 
               // 🔹 PIN or Biometric (system dialog lets user pick)
               ElevatedButton.icon(
-                onPressed: () => authController.authenticate(biometricOnly: false),
+                onPressed: () =>
+                    authController.authenticate(biometricOnly: false),
                 icon: const Icon(Icons.lock),
                 label: const Text("Use PIN or Biometric"),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
               ),
             ],

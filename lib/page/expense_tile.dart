@@ -48,7 +48,7 @@ class ExpenseTile extends StatelessWidget {
     final tag = item['tag'] ?? 'Other';
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
       padding: const EdgeInsets.only(left: 15, right: 5, top: 5, bottom: 5),
       decoration: BoxDecoration(
         color: Colors.black,
