@@ -1,4 +1,4 @@
-# hive_practise
+# Expense Tracker
 
 A new Flutter project.
 
