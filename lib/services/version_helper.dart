@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -24,9 +23,8 @@ class VersionHelper {
     try {
       final status = await newVersion.getVersionStatus();
       if (status!.canUpdate) updateDialog('Xpensr');
-    // ignore: empty_catches
-    } catch (e) {
-    }
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   static getVersion() {
@@ -46,7 +44,7 @@ class VersionHelper {
           return true;
         },
         child: Container(
-          color: Colors.white,
+          color: Colors.black,
           padding: EdgeInsets.all(20.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -58,9 +56,12 @@ class VersionHelper {
                       ? Row(
                           children: <Widget>[
                             Image.asset(
-                              'assets/icons/google_play.png',
+                              'assets/images/playstore.png',
                               height: 25,
                               width: 25,
+                            ),
+                            SizedBox(
+                              width: 10,
                             ),
                             Text('Google Play')
                           ],
@@ -68,7 +69,7 @@ class VersionHelper {
                       : Column(
                           children: <Widget>[
                             Image.asset(
-                              'assets/images/app_store.png',
+                              'assets/images/playstore.png',
                               height: 60,
                               width: 60,
                             ),

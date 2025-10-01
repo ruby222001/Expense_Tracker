@@ -16,7 +16,10 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Expense Tracker"),
+        title: Text(
+          "Expense Tracker",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           // GestureDetector(
           //     onTap: () {
@@ -29,17 +32,20 @@ class MyHomePage extends StatelessWidget {
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Icon(Icons.person),
+                child: Icon(Icons.summarize),
               )),
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
         onPressed: () async {
           Get.to(() => AddExpensePage(), transition: Transition.rightToLeft);
 
           controller.loadExpenses(); // Refresh on return
         },
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Obx(
@@ -58,14 +64,15 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Pie Chart',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+            if (!controller.expensesByCategory.isEmpty)
+              Text('Pie Chart',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             // Inside body:
             Obx(() {
               if (controller.expensesByCategory.isEmpty) {
                 return Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Center(child: Text("No data for chart")),
+                  child: SizedBox.shrink(),
                 );
               }
 
@@ -98,11 +105,14 @@ class MyHomePage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("No expenses yet"),
                           Image.asset(
                             'assets/images/folder.png',
                             height: 60,
-                          )
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text("No expenses yet"),
                         ],
                       ))
                     : ListView.builder(

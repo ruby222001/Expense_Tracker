@@ -11,56 +11,43 @@ class SplashLoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Track Your Expense Daily!!!',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Image.asset('assets/images/expense1.jpg'),
-              SizedBox(
-                height: 30,
-              ),
-              Obx(() => Text(
-                    authController.message.value,
-                    style: const TextStyle(fontSize: 20),
-                    textAlign: TextAlign.center,
-                  )),
-              const SizedBox(height: 50),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          // mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Track Your Expense Daily!!!',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Save smart, spend wiser ',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.white),
+            ),
+            Image.asset(
+              'assets/images/splash.jpg',
+            ),
 
-              // 🔹 Fingerprint only
-              // ElevatedButton.icon(
-              //   onPressed: () =>
-              //       authController.authenticate(biometricOnly: true),
-              //   icon: const Icon(Icons.fingerprint),
-              //   label: const Text("Use Fingerprint"),
-              //   style: ElevatedButton.styleFrom(
-              //     padding:
-              //         const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              //   ),
-              // ),
+            Obx(() => Text(
+                  authController.message.value,
+                  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.center,
+                )),
 
-              const SizedBox(height: 12),
-
-              // 🔹 PIN or Biometric (system dialog lets user pick)
-              ElevatedButton.icon(
-                onPressed: () =>
-                    authController.authenticate(biometricOnly: false),
-                icon: const Icon(Icons.lock),
-                label: const Text("Use PIN or Biometric"),
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-              ),
-            ],
-          ),
+            const SizedBox(height: 12),
+            GestureDetector(
+                onTap: () => authController.authenticate(biometricOnly: false),
+                child: Image.asset(
+                  "assets/images/fingerprint.png",
+                  height: 50,
+                  color: Colors.white,
+                )),
+            // 🔹 PIN or Biometric (system dialog lets user pick)
+          ],
         ),
       ),
     );
