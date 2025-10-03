@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_practise/components/snackbar.dart';
@@ -10,7 +12,21 @@ class AddExpensePage extends StatefulWidget {
   final int? index;
   final Map<String, dynamic>? existingExpense;
 
-  AddExpensePage({this.isEditing = false, this.index, this.existingExpense});
+  // 👇 New optional fields for scanned receipt
+  final String? prefilledExpense;
+  final double? prefilledPrice;
+  final String? prefilledTag;
+  final DateTime? prefilledDate;
+
+  AddExpensePage({
+    this.isEditing = false,
+    this.index,
+    this.existingExpense,
+    this.prefilledExpense,
+    this.prefilledPrice,
+    this.prefilledTag,
+    this.prefilledDate,
+  });
 
   @override
   State<AddExpensePage> createState() => _AddExpensePageState();
@@ -20,8 +36,10 @@ class _AddExpensePageState extends State<AddExpensePage> {
   final controller = Get.find<AppController>();
   final addExpensecontroller = Get.put(ExpenseController());
   @override
+  @override
   void initState() {
     super.initState();
+
     if (widget.isEditing && widget.existingExpense != null) {
       addExpensecontroller.expenseController.text =
           widget.existingExpense!['expense'] ?? '';
@@ -31,6 +49,19 @@ class _AddExpensePageState extends State<AddExpensePage> {
           widget.existingExpense!['tag'] ?? addExpensecontroller.tags.first;
       addExpensecontroller.selectedDate = DateFormat('yyyy-MM-dd')
           .parse(widget.existingExpense!['date'] ?? DateTime.now().toString());
+    } else {
+      // 👇 Prefill from scan if available
+      addExpensecontroller.expenseController.text =
+          widget.prefilledExpense ?? '';
+      addExpensecontroller.priceController.text =
+          widget.prefilledPrice.toString();
+      addExpensecontroller.selectedTag =
+          widget.prefilledTag ?? addExpensecontroller.tags.first;
+      if (widget.prefilledDate != null) {
+        addExpensecontroller.selectedDate =
+            DateTime.tryParse(widget.prefilledDate!.toString()) ??
+                DateTime.now();
+      }
     }
   }
 

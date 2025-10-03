@@ -6,11 +6,88 @@ import 'package:hive_practise/page/add_expense.dart';
 import 'package:hive_practise/page/expense_deatil_page.dart';
 import 'package:hive_practise/page/expense_tile.dart';
 import 'package:hive_practise/theme/settings.dart';
+import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+     import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
   final controller = Get.put(AppController());
+  final ImagePicker picker = ImagePicker();
+
+  Future<void> scanReceipt(BuildContext context) async {
+    final status = await Permission.photos.request();
+    if (!status.isGranted) return;
+
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedFile == null) return;
+
+    final imageFile = File(pickedFile.path);
+    final inputImage = InputImage.fromFile(imageFile);
+
+    final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
+    final recognizedText = await textRecognizer.processImage(inputImage);
+    final scannedText = recognizedText.text;
+
+    print("Scanned OCR Text:\n$scannedText");
+
+    // --- Extract numbers with currency symbols ---
+    // This regex captures optional currency symbols before numbers
+    final currencyRegEx =
+        RegExp(r'(Rs|INR|\$)?\s*(\d+(\.\d+)?)', caseSensitive: false);
+    final matches = currencyRegEx.allMatches(scannedText);
+
+    List<Map<String, dynamic>> extracted = [];
+    for (final m in matches) {
+      final symbol = m.group(1) ?? '';
+      final value = double.tryParse(m.group(2) ?? '0') ?? 0;
+      extracted.add({'symbol': symbol, 'value': value});
+    }
+
+    print('Extracted amounts: $extracted');
+
+    // Heuristic: total is the largest number
+    double total = extracted.isNotEmpty
+        ? extracted
+            .map((e) => e['value'] as double)
+            .reduce((a, b) => a > b ? a : b)
+        : 0;
+
+    // Extract date
+    final dateRegEx =
+        RegExp(r'(\d{2}[-/]\d{2}[-/]\d{4})|(\d{4}[-/]\d{2}[-/]\d{2})');
+    DateTime? finalDate;
+    final dateMatch = dateRegEx.firstMatch(scannedText);
+    if (dateMatch != null) {
+      try {
+        final matchedString = dateMatch.group(0)!;
+        finalDate = DateFormat('dd-MM-yyyy').parseLoose(matchedString);
+      } catch (_) {
+        try {
+          finalDate = DateFormat('yyyy-MM-dd').parseLoose(dateMatch.group(0)!);
+        } catch (_) {}
+      }
+    }
+    finalDate ??= DateTime.now();
+
+    print("Final Total = $total");
+    print("Final Date = $finalDate");
+
+    Get.to(() => AddExpensePage(
+          prefilledExpense: "Scanned Receipt",
+          prefilledPrice: total,
+          prefilledDate: finalDate,
+          prefilledTag: "Other",
+        ));
+
+    // Dispose recognizer
+    textRecognizer.close();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,20 +113,35 @@ class MyHomePage extends StatelessWidget {
               )),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white, // matches bottom bar
-        elevation: 6,
-        onPressed: () async {
-          await Get.to(() => AddExpensePage(),
-              transition: Transition.rightToLeft);
-          controller.loadExpenses(); // Refresh on return
-        },
-        child: const Icon(
-          Icons.add,
-          size: 30,
-          color: Colors.black,
-        ),
+
+floatingActionButton: SpeedDial(
+  icon: Icons.add,
+  activeIcon: Icons.close,
+  backgroundColor: Colors.white,
+  foregroundColor: Colors.black,
+  overlayOpacity: 0.0, // optional, no overlay
+  spacing: 10,
+  spaceBetweenChildren: 10,
+  children: [
+    SpeedDialChild(
+      child: const Icon(Icons.document_scanner, color: Colors.red),
+      backgroundColor: Colors.white,
+      label: 'Scan Receipt',
+      onTap: () async => await scanReceipt(context),
+    ),
+    SpeedDialChild(
+      child: const Icon(Icons.add, color: Colors.black),
+      backgroundColor: Colors.white,
+      label: 'Add Expense',
+      onTap: () async {
+        await Get.to(() => AddExpensePage(),
+            transition: Transition.rightToLeft);
+        controller.loadExpenses();
+      },
+    ),
+
+
+        ],
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
