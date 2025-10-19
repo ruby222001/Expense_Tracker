@@ -1,4 +1,4 @@
-package com.example.hive_practise
+package com.expense.hive_practise
 
 import io.flutter.embedding.android.FlutterFragmentActivity;
 

@@ -53,8 +53,9 @@ class _AddExpensePageState extends State<AddExpensePage> {
       // 👇 Prefill from scan if available
       addExpensecontroller.expenseController.text =
           widget.prefilledExpense ?? '';
-      addExpensecontroller.priceController.text =
-          widget.prefilledPrice.toString();
+     addExpensecontroller.priceController.text =
+    widget.prefilledPrice != null ? widget.prefilledPrice!.toString() : '';
+
       addExpensecontroller.selectedTag =
           widget.prefilledTag ?? addExpensecontroller.tags.first;
       if (widget.prefilledDate != null) {
