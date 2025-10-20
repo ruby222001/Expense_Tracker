@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive_practise/components/income_expense.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_practise/controller/app_controller.dart';
 import 'package:hive_practise/page/add_expense.dart';
 import 'package:hive_practise/page/expense_deatil_page.dart';
 import 'package:hive_practise/page/expense_tile.dart';
-import 'package:hive_practise/theme/settings.dart';
-import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pie_chart/pie_chart.dart';
-import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
@@ -93,7 +88,7 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Expense Tracker",
+          "Xpenser",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -151,46 +146,51 @@ class MyHomePage extends StatelessWidget {
       // ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.red,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 4,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Obx(
-            () => Row(
-              children: [
-                const Icon(
-                  Icons.arrow_downward,
-                  color: Colors.white,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
-                const Text(
-                  'Expense',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  'Rs ${controller.totalExpenseThisYear.value.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+        child: GestureDetector(
+          onTap: () {
+            controller.showInterstitialAd();
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
                 ),
               ],
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Obx(
+              () => Row(
+                children: [
+                  const Icon(
+                    Icons.arrow_downward,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Expense',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Rs ${controller.totalExpenseThisYear.value.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -216,66 +216,82 @@ class MyHomePage extends StatelessWidget {
           }
 
           return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (controller.expensesByCategoryThisYear.isNotEmpty)
-                  const Text(
-                    'Pie Chart',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            child: GestureDetector(
+              onTap: () {
+                controller.showInterstitialAd();
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Obx(
+                    () => controller.isBannerLoaded.value
+                        ? Container(
+                            width: controller.bannerAd.size.width.toDouble(),
+                            height: controller.bannerAd.size.height.toDouble(),
+                            child: AdWidget(ad: controller.bannerAd),
+                          )
+                        : SizedBox(),
                   ),
+                  if (controller.expensesByCategoryThisYear.isNotEmpty)
+                    const Text(
+                      'Pie Chart',
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
 
-                /// Pie chart
-                if (controller.expensesByCategoryThisYear.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: PieChart(
-                      dataMap: controller.expensesByCategoryThisYear,
-                      animationDuration: const Duration(milliseconds: 800),
-                      chartRadius: MediaQuery.of(context).size.width / 2.2,
-                      chartType: ChartType.disc,
-                      legendOptions: const LegendOptions(
-                        legendPosition: LegendPosition.right,
-                        showLegendsInRow: false,
-                        legendTextStyle: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      chartValuesOptions: const ChartValuesOptions(
-                        showChartValueBackground: true,
-                        showChartValues: true,
-                        decimalPlaces: 1,
+                  /// Pie chart
+                  if (controller.expensesByCategoryThisYear.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: PieChart(
+                        dataMap: controller.expensesByCategoryThisYear,
+                        animationDuration: const Duration(milliseconds: 800),
+                        chartRadius: MediaQuery.of(context).size.width / 2.2,
+                        chartType: ChartType.disc,
+                        legendOptions: const LegendOptions(
+                          legendPosition: LegendPosition.right,
+                          showLegendsInRow: false,
+                          legendTextStyle:
+                              TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        chartValuesOptions: const ChartValuesOptions(
+                          showChartValueBackground: true,
+                          showChartValues: true,
+                          decimalPlaces: 1,
+                        ),
                       ),
                     ),
+
+                  /// Expense list
+                  ListView.builder(
+                    shrinkWrap: true, // ✅ Important
+                    physics:
+                        const NeverScrollableScrollPhysics(), // ✅ disable inner scroll
+                    itemCount: controller.expensesThisYear.length,
+                    itemBuilder: (context, index) {
+                      final item = controller.expensesThisYear[index];
+
+                      return ExpenseTile(
+                        item: item,
+                        index: index,
+                        onEdit: (item, index) {
+                          Get.to(
+                            () => AddExpensePage(
+                              isEditing: true,
+                              existingExpense: item,
+                              index: index,
+                            ),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                        onDelete: (index) {
+                          controller.deleteAt(index);
+                        },
+                      );
+                    },
                   ),
-
-                /// Expense list
-                ListView.builder(
-                  shrinkWrap: true, // ✅ Important
-                  physics:
-                      const NeverScrollableScrollPhysics(), // ✅ disable inner scroll
-                  itemCount: controller.expensesThisYear.length,
-                  itemBuilder: (context, index) {
-                    final item = controller.expensesThisYear[index];
-
-                    return ExpenseTile(
-                      item: item,
-                      index: index,
-                      onEdit: (item, index) {
-                        Get.to(
-                          () => AddExpensePage(
-                            isEditing: true,
-                            existingExpense: item,
-                            index: index,
-                          ),
-                          transition: Transition.rightToLeft,
-                        );
-                      },
-                      onDelete: (index) {
-                        controller.deleteAt(index);
-                      },
-                    );
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }),

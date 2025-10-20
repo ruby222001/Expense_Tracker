@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_practise/components/snackbar.dart';
+import 'package:hive_practise/services/ad_helper.dart';
 import 'package:intl/intl.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 extension DateParsing on String {
   DateTime? toDate() {
@@ -23,11 +25,17 @@ class AppController extends GetxController {
     super.onInit();
     box = Hive.box('test');
     loadExpenses();
+    _loadBannerAd();
+    loadInterAd();
   }
 
 // Total expense getter
   RxDouble totalExpense = 0.0.obs;
+  late BannerAd bannerAd;
+  late InterstitialAd interstitialAd;
 
+  var isBannerLoaded = false.obs;
+  var isinterLoaded = false.obs;
   void calculateTotalExpense() {
     double total = 0.0;
     for (var item in allExpenses) {
@@ -245,5 +253,63 @@ class AppController extends GetxController {
     SSnackbarUtil.showFadeSnackbar(
         context, "added expense", SnackbarType.success);
     print("Added: $newEntry");
+  }
+
+  void _loadBannerAd() {
+    final ad = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          bannerAd = ad as BannerAd;
+          isBannerLoaded.value = true; // ✅ triggers UI update
+          print("Banner Ad Loaded");
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    );
+    ad.load();
+  }
+
+  void loadInterAd() {
+    InterstitialAd.load(
+      adUnitId: AdHelper.bannerInterstatialUnitId, // test ID
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          interstitialAd = ad;
+          isinterLoaded.value = true;
+          print("Interstitial Ad Loaded");
+        },
+        onAdFailedToLoad: (err) {
+          print("Failed to load interstitial ad: ${err.message}");
+        },
+      ),
+    );
+  }
+
+  void showInterstitialAd() {
+    if (!isinterLoaded.value) return;
+
+    interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        isinterLoaded.value = false;
+        loadInterAd(); // reload
+      },
+      onAdFailedToShowFullScreenContent: (ad, error) {
+        ad.dispose();
+        isinterLoaded.value = false;
+        loadInterAd();
+      },
+    );
+
+    interstitialAd.show();
+    
+    isinterLoaded.value = false;
   }
 }

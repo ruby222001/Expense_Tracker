@@ -6,6 +6,7 @@ import 'package:hive_practise/homepage.dart';
 import 'package:hive_practise/page/splash_page.dart';
 import 'package:hive_practise/services/version_helper.dart';
 import 'package:hive_practise/theme/theme.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   Get.put(ThemeController());
@@ -24,9 +25,11 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final controller = Get.put(ThemeController());
   @override
-  void initState() {
+  void initState()  {
     super.initState();
-    VersionHelper.basicStatusCheck();
+     VersionHelper.basicStatusCheck();
+       MobileAds.instance.initialize();
+
   }
 
   @override
