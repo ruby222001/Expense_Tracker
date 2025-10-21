@@ -208,11 +208,11 @@ class MonthlySummaryPage extends StatelessWidget {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       );
     });

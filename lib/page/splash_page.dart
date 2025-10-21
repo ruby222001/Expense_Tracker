@@ -4,7 +4,7 @@ import 'package:hive_practise/controller/splash_controller.dart';
 import 'package:hive_practise/homepage.dart';
 
 class SplashLoginPage extends StatelessWidget {
-  SplashLoginPage({Key? key}) : super(key: key);
+  SplashLoginPage({super.key});
 
   final AuthController authController = Get.put(AuthController());
 

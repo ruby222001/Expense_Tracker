@@ -11,7 +11,7 @@ class SummaryTile extends StatelessWidget {
   final Color textColor;
 
   const SummaryTile({
-    Key? key,
+    super.key,
     required this.icon,
     required this.iconColor,
     required this.title,
@@ -19,7 +19,7 @@ class SummaryTile extends StatelessWidget {
     this.backgroundColor = Colors.white,
     this.iconBackground = Colors.white,
     this.textColor = Colors.grey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

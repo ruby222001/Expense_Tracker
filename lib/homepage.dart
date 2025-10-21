@@ -225,7 +225,7 @@ class MyHomePage extends StatelessWidget {
                 children: [
                   Obx(
                     () => controller.isBannerLoaded.value
-                        ? Container(
+                        ? SizedBox(
                             width: controller.bannerAd.size.width.toDouble(),
                             height: controller.bannerAd.size.height.toDouble(),
                             child: AdWidget(ad: controller.bannerAd),

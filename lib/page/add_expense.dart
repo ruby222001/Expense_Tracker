@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,7 +17,7 @@ class AddExpensePage extends StatefulWidget {
   final String? prefilledTag;
   final DateTime? prefilledDate;
 
-  AddExpensePage({
+  const AddExpensePage({super.key, 
     this.isEditing = false,
     this.index,
     this.existingExpense,
@@ -53,8 +52,9 @@ class _AddExpensePageState extends State<AddExpensePage> {
       // 👇 Prefill from scan if available
       addExpensecontroller.expenseController.text =
           widget.prefilledExpense ?? '';
-     addExpensecontroller.priceController.text =
-    widget.prefilledPrice != null ? widget.prefilledPrice!.toString() : '';
+      addExpensecontroller.priceController.text = widget.prefilledPrice != null
+          ? widget.prefilledPrice!.toString()
+          : '';
 
       addExpensecontroller.selectedTag =
           widget.prefilledTag ?? addExpensecontroller.tags.first;
@@ -104,7 +104,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
 
               // Tag Dropdown
               DropdownButtonFormField<String>(
-                value: addExpensecontroller.selectedTag,
+                initialValue: addExpensecontroller.selectedTag,
                 items: addExpensecontroller.tags
                     .map((tag) => DropdownMenuItem(
                           value: tag,
@@ -127,7 +127,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Today: ${DateFormat('yyyy-MM-dd').format(addExpensecontroller.selectedDate)}",
+                    DateFormat('yyyy-MM-dd').format(addExpensecontroller.selectedDate),
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 8),

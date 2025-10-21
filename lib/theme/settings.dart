@@ -11,7 +11,7 @@ class Settings extends StatelessWidget {
     final ThemeController themeController = Get.find(); // Get the instance
 
     return Scaffold(
-      backgroundColor: themeController.themeData.colorScheme.background,
+      backgroundColor: themeController.themeData.colorScheme.surface,
       appBar: AppBar(title: const Text("Settings")),
       body: Container(
         decoration: BoxDecoration(

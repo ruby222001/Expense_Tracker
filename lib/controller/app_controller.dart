@@ -134,7 +134,7 @@ class AppController extends GetxController {
       final price = double.tryParse(item['price'] ?? '0') ?? 0;
       if (date != null) {
         // Format month as "January 2025"
-        String key = "${DateFormat('MMMM yyyy').format(date)}";
+        String key = DateFormat('MMMM yyyy').format(date);
         dataMap[key] = (dataMap[key] ?? 0) + price;
       }
     }
@@ -206,11 +206,10 @@ class AppController extends GetxController {
 
   void deleteAt(int index) {
     if (index >= 0 && index < allExpenses.length) {
-      final removed = allExpenses.removeAt(index);
+      allExpenses.removeAt(index);
       box.put('expensesList', allExpenses);
       calculateTotalExpense();
       calculateTotalExpenseThisYear(); // ✅
-      print("Deleted item at $index: $removed");
     }
   }
 
@@ -234,7 +233,6 @@ class AppController extends GetxController {
       SSnackbarUtil.showFadeSnackbar(
           context, "Updated expense", SnackbarType.success);
 
-      print("Updated item at $index: ${allExpenses[index]}");
     }
   }
 
@@ -252,7 +250,6 @@ class AppController extends GetxController {
     calculateTotalExpenseThisYear(); // ✅
     SSnackbarUtil.showFadeSnackbar(
         context, "added expense", SnackbarType.success);
-    print("Added: $newEntry");
   }
 
   void _loadBannerAd() {
@@ -264,10 +261,8 @@ class AppController extends GetxController {
         onAdLoaded: (ad) {
           bannerAd = ad as BannerAd;
           isBannerLoaded.value = true; // ✅ triggers UI update
-          print("Banner Ad Loaded");
         },
         onAdFailedToLoad: (ad, err) {
-          print('Failed to load banner ad: ${err.message}');
           ad.dispose();
         },
       ),
@@ -283,10 +278,8 @@ class AppController extends GetxController {
         onAdLoaded: (ad) {
           interstitialAd = ad;
           isinterLoaded.value = true;
-          print("Interstitial Ad Loaded");
         },
         onAdFailedToLoad: (err) {
-          print("Failed to load interstitial ad: ${err.message}");
         },
       ),
     );

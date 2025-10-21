@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:new_version_plus/new_version_plus.dart';
+// ignore: depend_on_referenced_packages
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:store_redirect/store_redirect.dart';
 

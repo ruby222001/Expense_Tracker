@@ -96,7 +96,7 @@ class YearlySummaryPage extends StatelessWidget {
               title: Text("Year ${entry.key}"),
               trailing: Text("Rs ${entry.value.toStringAsFixed(2)}"),
             );
-          }).toList(),
+          }),
         ],
       );
     });

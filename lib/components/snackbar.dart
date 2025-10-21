@@ -69,6 +69,7 @@ class SSnackbarUtil {
         ),
         // borderRadius: 12,
         // borderWidth: 2,
+        // ignore: deprecated_member_use
         borderColor: color.withOpacity(0.8),
         barBlur: 1,
         // snackStyle: SnackStyle.GROUNDED,
